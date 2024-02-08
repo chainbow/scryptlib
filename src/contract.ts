@@ -1,6 +1,6 @@
 import { basename, dirname } from 'path';
 import { ABIEntityType, Argument, LibraryEntity, ParamEntity, parseGenericType } from '.';
-import { ContractEntity, getFullFilePath, loadSourceMapfromArtifact, OpCode, StaticEntity } from './compilerWrapper';
+import { ContractEntity, loadSourceMapfromArtifact, OpCode, StaticEntity } from './compilerWrapper';
 import {
   ABICoder, ABIEntity, AliasEntity, Arguments, bsv, buildContractCode, checkNOPScript, CompileResult, DEFAULT_FLAGS, findSrcInfoV1, findSrcInfoV2, FunctionCall, hash160, isArrayType, JSONParserSync, path2uri, resolveType, Script, StructEntity, subscript, TypeResolver, uri2path
 } from './internal';
@@ -342,23 +342,7 @@ export class AbstractContract {
 
     let error = `VerifyError: ${err.error}, fails at ${new bsv.Opcode(failedOpCode)}\n`;
 
-    if (this.sourceMapFile) {
-      const sourceMapFilePath = uri2path(this.sourceMapFile);
-      const sourceMap = JSONParserSync(sourceMapFilePath);
-
-      const sourcePath = uri2path(this.file);
-
-      const srcDir = dirname(sourcePath);
-      const sourceFileName = basename(sourcePath);
-
-      const sources = sourceMap.sources.map((source: string) => getFullFilePath(source, srcDir, sourceFileName));
-
-      const pos = findSrcInfoV2(err.failedAt.pc, sourceMap);
-
-      if (pos && sources[pos[1]]) {
-        error = `VerifyError: ${err.error} \n\t[Go to Source](${path2uri(sources[pos[1]])}#${pos[2]})  fails at ${new bsv.Opcode(failedOpCode)}\n`;
-      }
-    } else if (this.version <= 8) {
+    if (this.version <= 8) {
 
       const artifact = Object.getPrototypeOf(this).constructor.artifact as Artifact;
 

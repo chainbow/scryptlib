@@ -9,8 +9,8 @@ import { fileURLToPath, pathToFileURL } from 'url';
 export { bsv };
 
 import { ABIEntity, LibraryEntity } from '.';
-import { compileAsync, OpCode } from './compilerWrapper';
-import { AbstractContract, compile, CompileResult, findCompiler, getValidatedHexString, Script, ScryptType, StructEntity, SupportedParamType } from './internal';
+import { OpCode } from './compilerWrapper';
+import { AbstractContract, getValidatedHexString, Script, ScryptType, StructEntity, SupportedParamType } from './internal';
 import { arrayTypeAndSizeStr, isGenericType, parseGenericType } from './typeCheck';
 
 const BN = bsv.crypto.BN;
@@ -333,74 +333,9 @@ export function isEmpty(obj: any): boolean {
   return Object.keys(obj).length === 0;
 }
 
-
-
-
-export function compileContract(file: string, options?: {
-  out?: string,
-  sourceMap?: boolean,
-  artifact?: boolean,
-}): CompileResult {
-  options = Object.assign({
-    out: join(__dirname, '../out'),
-    sourceMap: false,
-    artifact: false,
-  }, options);
-  if (!fs.existsSync(file)) {
-    throw (`file ${file} not exists!`);
-  }
-
-  if (!fs.existsSync(options.out as string)) {
-    fs.mkdirSync(options.out as string);
-  }
-
-
-  const result = compile(
-    { path: file },
-    {
-      artifact: options.artifact, outputDir: options.out,
-      sourceMap: options.sourceMap,
-      cmdPrefix: findCompiler()
-    }
-  );
-
-  return result;
-}
-
-
-export function compileContractAsync(file: string, options?: {
-  out?: string,
-  artifact?: boolean,
-  sourceMap?: boolean
-}): Promise<CompileResult> {
-  options = Object.assign({
-    out: join(__dirname, '..', 'out'),
-    sourceMap: false,
-    artifact: false,
-  }, options);
-  if (!fs.existsSync(file)) {
-    throw (`file ${file} not exists!`);
-  }
-
-  if (!fs.existsSync(options.out as string)) {
-    fs.mkdirSync(options.out as string);
-  }
-
-  return compileAsync({ path: file }, {
-    artifact: options.artifact, outputDir: options.out,
-    sourceMap: options.sourceMap,
-    hex: true,
-    cmdPrefix: findCompiler()
-  });
-}
-
-
 export function newCall(Cls: typeof AbstractContract, args: Array<SupportedParamType>): AbstractContract {
   return new (Function.prototype.bind.apply(Cls, [null].concat(args)));
 }
-
-
-
 
 export function resolveConstValue(node: any): string | undefined {
 

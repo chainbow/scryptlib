@@ -1,6 +1,6 @@
 export {
-  buildContractClass, compile, compileAsync, compileContract, doCompileAsync, getPreimage, signTx,
-  handleCompilerOutput, compileContractAsync, CompilingSettings, CompileResult
+  buildContractClass, getPreimage, signTx,
+  CompilingSettings, CompileResult
 } from './internal';
 
 export {
@@ -12,8 +12,8 @@ export {
   arrayTypeAndSizeStr, toLiteralArrayType,
   librarySign, structSign, resolveGenericType,
   buildTypeResolver, getStructDeclaration, getABIDeclaration, typeOfArg,
-  compilerVersion, parseLiteral,
-  isEmpty, JSONParser, getFullFilePath, path2uri, uri2path, md5, FunctionCall, stringToBytes, isScryptType, isSubBytes, toJSON,
+  parseLiteral,
+  isEmpty, JSONParser, path2uri, uri2path, md5, FunctionCall, stringToBytes, isScryptType, isSubBytes, toJSON,
   getSortedItem, flatternArg,
 } from './internal';
 
@@ -30,9 +30,6 @@ export {
 //Equivalent to the built-in functions
 export { hash160, sha256, hash256, and, or, xor, invert, num2bin, buildOpreturnScript, len, buildPublicKeyHashScript, writeVarint, toLEUnsigned } from './internal';
 
-export {
-  getPlatformScryptc, findCompiler
-} from './internal';
 
 export {
   partialSha256, sha256ByPartialHash
