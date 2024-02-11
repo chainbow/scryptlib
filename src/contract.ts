@@ -1,8 +1,7 @@
-import { basename, dirname } from 'path';
 import { ABIEntityType, Argument, LibraryEntity, ParamEntity, parseGenericType } from '.';
 import { ContractEntity, loadSourceMapfromArtifact, OpCode, StaticEntity } from './compilerWrapper';
 import {
-  ABICoder, ABIEntity, AliasEntity, Arguments, bsv, buildContractCode, checkNOPScript, CompileResult, DEFAULT_FLAGS, findSrcInfoV1, findSrcInfoV2, FunctionCall, hash160, isArrayType, JSONParserSync, path2uri, resolveType, Script, StructEntity, subscript, TypeResolver, uri2path
+  ABICoder, ABIEntity, AliasEntity, Arguments, bsv, buildContractCode, checkNOPScript, CompileResult, DEFAULT_FLAGS, FunctionCall, hash160, isArrayType, path2uri, resolveType, Script, StructEntity, subscript, TypeResolver
 } from './internal';
 import { Bytes, Int, isScryptType, SupportedParamType, SymbolType, TypeInfo } from './scryptTypes';
 import Stateful from './stateful';
@@ -359,15 +358,6 @@ export class AbstractContract {
 
           const opcode = sourceMap[opcodeIndex];
 
-          if (!opcode.pos || opcode.pos.file === 'std') {
-
-            const srcInfo = findSrcInfoV1(sourceMap, opcodeIndex);
-
-            if (srcInfo) {
-              opcode.pos = srcInfo.pos;
-            }
-          }
-
           // in vscode termianal need to use [:] to jump to file line, but here need to use [#] to jump to file line in output channel.
           if (opcode && opcode.pos) {
             error = `VerifyError: ${err.error} \n\t[Go to Source](${path2uri(opcode.pos.file)}#${opcode.pos.line})  fails at ${new bsv.Opcode(failedOpCode)}\n`;
@@ -385,15 +375,6 @@ export class AbstractContract {
    * @returns a uri of the debugger launch configuration
    */
   public genLaunchConfig(txContext?: TxContext): string {
-
-    const txCtx = Object.assign({}, this.txContext || {}, txContext || {}) as TxContext;
-
-    const lastCalledPubFunction = this.lastCalledPubFunction();
-
-    if (lastCalledPubFunction) {
-      const debugUrl = lastCalledPubFunction.genLaunchConfig(txCtx);
-      return `[Launch Debugger](${debugUrl.replace(/file:/i, 'scryptlaunch:')})\n`;
-    }
     throw new Error('No public function called');
   }
 

@@ -1,15 +1,10 @@
-import { parseChunked, stringifyStream } from '@discoveryjs/json-ext';
 import * as bsv from 'bsv';
 import * as crypto from 'crypto';
-import * as fs from 'fs';
-import { join } from 'path';
-import { decode } from '@jridgewell/sourcemap-codec';
 import { fileURLToPath, pathToFileURL } from 'url';
 
 export { bsv };
 
 import { ABIEntity, LibraryEntity } from '.';
-import { OpCode } from './compilerWrapper';
 import { AbstractContract, getValidatedHexString, Script, ScryptType, StructEntity, SupportedParamType } from './internal';
 import { arrayTypeAndSizeStr, isGenericType, parseGenericType } from './typeCheck';
 
@@ -313,22 +308,6 @@ export function subscript(index: number, arraySizes: Array<number>): string {
 }
 
 
-
-export function readFileByLine(path: string, index: number): string {
-
-  let result = '';
-  fs.readFileSync(path, 'utf8').split(/\r?\n/).every(function (line, i) {
-    if (i === (index - 1)) {
-      result = line;
-      return false;
-    }
-    return true;
-  });
-
-  return result;
-}
-
-
 export function isEmpty(obj: any): boolean {
   return Object.keys(obj).length === 0;
 }
@@ -455,74 +434,6 @@ export function structSign(structEntity: StructEntity): string {
   return `${JSON.stringify(structEntity.params.reduce((p, v) => Object.assign(p, {
     [v.name]: v.type
   }), {}), null, 4)}`;
-}
-
-
-
-
-
-export async function JSONParser(file: string): Promise<boolean> {
-
-  return new Promise((resolve, reject) => {
-
-    parseChunked(fs.createReadStream(file))
-      .then(data => {
-        resolve(data);
-      })
-      .catch(e => {
-        reject(e);
-      });
-
-  });
-}
-
-export function JSONParserSync(file: string): any {
-  return JSON.parse(fs.readFileSync(file, 'utf8'));
-}
-
-
-export async function JSONStringify(file: string, data: unknown): Promise<boolean> {
-  return new Promise((resolve, reject) => {
-    stringifyStream(data)
-      .pipe(fs.createWriteStream(file))
-      .on('finish', () => {
-        resolve(true);
-      })
-      .on('error', (e) => {
-        reject(e);
-      });
-  });
-}
-
-
-
-export function findSrcInfoV2(pc: number, sourceMap: unknown): number[] | undefined {
-
-  const decoded = decode(sourceMap['mappings']);
-
-  for (let index = 0; index < decoded[0].length; index++) {
-    const element = decoded[0][index];
-
-    if (element[0] <= pc) {
-      continue;
-    }
-    return decoded[0][index - 1];
-  }
-
-  return decoded[0][decoded[0].length - 1];
-}
-
-
-/**
- * @deprecated use findSrcInfoV2
- * @param opcodes OpCode[] from sourceMap
- */
-export function findSrcInfoV1(opcodes: OpCode[], opcodesIndex: number): OpCode | undefined {
-  while (--opcodesIndex > 0) {
-    if (opcodes[opcodesIndex].pos && opcodes[opcodesIndex].pos.file !== 'std' && opcodes[opcodesIndex].pos.line > 0) {
-      return opcodes[opcodesIndex];
-    }
-  }
 }
 
 

@@ -2,7 +2,6 @@ import { bin2num } from './builtins';
 import { ABIEntity, ABIEntityType } from './compilerWrapper';
 import { AbstractContract, AsmVarValues, TxContext, VerifyResult } from './contract';
 import { deserializeArgfromHex } from './deserializer';
-import { genLaunchConfigFile } from './launchConfig';
 import { SupportedParamType, TypeResolver, Int } from './scryptTypes';
 import { toScriptHex } from './serializer';
 import Stateful from './stateful';
@@ -113,38 +112,8 @@ export class FunctionCall {
     return this.toScript().toHex();
   }
 
-
-
-  genLaunchConfig(txContext?: TxContext): FileUri {
-
-    const pubFunc: string = this.methodName;
-    const name = `Debug ${this.contract.contractName}`;
-    const program = `${this.contract.file}`;
-
-    const asmArgs: AsmVarValues = this.contract.asmArgs || {};
-
-    const state = {};
-    if (AbstractContract.isStateful(this.contract)) {
-      Object.assign(state, { opReturnHex: this.contract.dataPart?.toHex() || '' });
-    } else if (this.contract.dataPart) {
-      Object.assign(state, { opReturn: this.contract.dataPart.toASM() });
-    }
-
-    const txCtx: TxContext = Object.assign({}, this.contract.txContext || {}, txContext || {}, state) as TxContext;
-
-
-    return genLaunchConfigFile(this.contract.resolver, this.contract.ctorArgs(), this.args, pubFunc, name, program, txCtx, asmArgs);
-  }
-
   verify(txContext?: TxContext): VerifyResult {
     const result = this.contract.run_verify(this.unlockingScript, txContext);
-
-    if (!result.success) {
-      const debugUrl = this.genLaunchConfig(txContext);
-      if (debugUrl) {
-        result.error = result.error + `\t[Launch Debugger](${debugUrl.replace(/file:/i, 'scryptlaunch:')})\n`;
-      }
-    }
     return result;
   }
 

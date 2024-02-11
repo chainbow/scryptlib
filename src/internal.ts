@@ -7,4 +7,3 @@ export * from './abi';
 export * from './partialSha256';
 export * from './typeCheck';
 export * from './builtins';
-export * from './launchConfig';

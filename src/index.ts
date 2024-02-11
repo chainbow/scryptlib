@@ -6,14 +6,14 @@ export {
 export {
   bsv, toHex, bin2num, int2Asm, bytes2Literal, bytesToHexString, getValidatedHexString,
   findStructByType, findStructByName, isArrayType,
-  arrayTypeAndSize, newCall, getNameByType, genLaunchConfigFile, subArrayType,
+  arrayTypeAndSize, newCall, getNameByType, subArrayType,
   isGenericType, parseGenericType,
-  readLaunchJson, getLowSPreimage, parseAbiFromUnlockingScript, findConstStatic, findStatic, resolveConstValue,
+   getLowSPreimage, parseAbiFromUnlockingScript, findConstStatic, findStatic, resolveConstValue,
   arrayTypeAndSizeStr, toLiteralArrayType,
   librarySign, structSign, resolveGenericType,
   buildTypeResolver, getStructDeclaration, getABIDeclaration, typeOfArg,
-  parseLiteral,
-  isEmpty, JSONParser, path2uri, uri2path, md5, FunctionCall, stringToBytes, isScryptType, isSubBytes, toJSON,
+  
+  isEmpty, path2uri, uri2path, md5, FunctionCall,  isScryptType, isSubBytes, 
   getSortedItem, flatternArg,
 } from './internal';
 
